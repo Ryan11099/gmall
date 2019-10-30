@@ -6,3 +6,6 @@ spring:
       config:
         server-addr: 127.0.0.1:8848
         namespace: 1d6014eb-2dcf-453c-9cbb-1050d8742de0
+        group: dev
+        file-extension: yml
+        #添加一个后缀的选项，意思是读取文件时先读取yml结尾的文件

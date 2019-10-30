@@ -33,6 +33,14 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+
+    @GetMapping("{catId}")
+    public Resp<PageVo> queryByCidPage(@PathVariable("catId")Long catId, QueryCondition condition){
+
+        PageVo pageVo = this.attrGroupService.queryByCidPage(catId, condition);
+        return Resp.ok(pageVo);
+    }
+
     /**
      * 列表
      */

@@ -1,6 +1,8 @@
 package com.atguigu.gmall.pms.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -25,6 +27,25 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         );
 
         return new PageVo(page);
+    }
+
+    @Override
+    public List<CategoryEntity> queryCategories(Integer level, Long parentCid) {
+
+        QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
+
+        //判断leavl是否为null
+        if(level != 0){
+            wrapper.eq("cat_level", level);
+        }
+
+        if(parentCid != null){
+            wrapper.eq("parent_cid", parentCid);
+        }
+
+
+        return this.list(wrapper);//使用this直接启动相当于利用dao层启动一样，因为位置是在本类中
+
     }
 
 }

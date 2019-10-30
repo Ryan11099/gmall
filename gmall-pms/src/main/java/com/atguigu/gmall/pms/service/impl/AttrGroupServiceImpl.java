@@ -21,7 +21,26 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     public PageVo queryPage(QueryCondition params) {
         IPage<AttrGroupEntity> page = this.page(
                 new Query<AttrGroupEntity>().getPage(params),
+                //分页条件
                 new QueryWrapper<AttrGroupEntity>()
+                //查询条件
+        );
+
+        return new PageVo(page);
+    }
+    @Override
+    public PageVo queryByCidPage(Long catId, QueryCondition condition) {
+
+        QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<>();
+
+        // 判断cateId是否为空
+        if (catId != null) {
+            wrapper.eq("catelog_id", catId);
+        }
+
+        IPage<AttrGroupEntity> page = this.page(
+                new Query<AttrGroupEntity>().getPage(condition),
+                wrapper
         );
 
         return new PageVo(page);

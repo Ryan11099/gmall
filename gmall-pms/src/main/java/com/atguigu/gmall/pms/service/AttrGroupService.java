@@ -16,5 +16,8 @@ import com.atguigu.core.bean.QueryCondition;
 public interface AttrGroupService extends IService<AttrGroupEntity> {
 
     PageVo queryPage(QueryCondition params);
+
+
+    PageVo queryByCidPage(Long catId, QueryCondition condition);
 }
 
