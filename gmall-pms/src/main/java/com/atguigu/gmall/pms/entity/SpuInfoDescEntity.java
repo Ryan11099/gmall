@@ -1,5 +1,6 @@
 package com.atguigu.gmall.pms.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +25,8 @@ public class SpuInfoDescEntity implements Serializable {
 	/**
 	 * 商品id
 	 */
-	@TableId
+	@TableId(type = IdType.INPUT)//因为在配置文件中将每个表的参数设置为了自增模式，所以自己设置是没有用的
+	//因此在表中单独启动
 	@ApiModelProperty(name = "spuId",value = "商品id")
 	private Long spuId;
 	/**

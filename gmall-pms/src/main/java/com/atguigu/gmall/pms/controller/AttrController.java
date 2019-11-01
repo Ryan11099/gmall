@@ -34,6 +34,7 @@ public class AttrController {
     @Autowired
     private AttrService attrService;
 
+    //保存对应的属性，分表保存
     @GetMapping
     public Resp<PageVo> queryAttrBiCid(@RequestParam(value = "type", required = false)Integer type , @RequestParam(value = "cid" , required = false) Long cid , QueryCondition condition ){
         PageVo pageVo = this.attrService.queryAttrByCid(type , cid , condition);
