@@ -3,18 +3,20 @@ package com.atguigu.gmall.pms.service.impl;
 import com.atguigu.gmall.pms.dao.*;
 import com.atguigu.gmall.pms.entity.*;
 import com.atguigu.gmall.pms.feign.GmallSmsClient;
+import com.atguigu.gmall.pms.service.SpuInfoDescService;
 import com.atguigu.gmall.pms.vo.ProductAttrValueVO;
-import com.atguigu.gmall.pms.vo.SaleVO;
 import com.atguigu.gmall.pms.vo.SkuInfoVO;
 import com.atguigu.gmall.pms.vo.SpuInfoVO;
 import java.util.Date;
+
+import com.atguigu.sms.gmall.vo.SaleVO;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -25,6 +27,7 @@ import com.atguigu.core.bean.Query;
 import com.atguigu.core.bean.QueryCondition;
 
 import com.atguigu.gmall.pms.service.SpuInfoService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 
@@ -45,6 +48,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private GmallSmsClient smsClient;
     @Autowired
     private SpuInfoDao spuInfoDao;
+
+    @Autowired
+    private SpuInfoDescService spuInfoDescService;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<SpuInfoEntity> page = this.page(
@@ -82,43 +88,29 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageVo(page);
     }
 
+    @GlobalTransactional
     @Override
+   // @Transactional
     public void bigSave(SpuInfoVO spuInfoVO) {
-
         //因为操作的有九张表。spu有三张，sku有三张，营销有三张
 
         //1.新增spu相关的三张表
 
         //1.1新增spuInfo
-        System.out.println("111111111111111");
-        spuInfoVO.setCreateTime(new Date());
-        //两者之间使用同一个数据，如果没有使用同一个数据，会有毫秒的延迟，导致时间不准确
-        spuInfoVO.setUodateTime(spuInfoVO.getCreateTime());
-        this.save(spuInfoVO);
-        //这里的没有使用Dao是因为在本对象的下面
-        Long spuId = spuInfoVO.getId();
-
+        Long spuId = saveSpuInfo(spuInfoVO);
         //1.2新增spuInfoDesc,新增的顺序不能变，因为这个的增加需要使用到spuIfoid
-        List<String> spuImages = spuInfoVO.getSpuImages();
-        String desc = StringUtils.join(spuImages, ",");
-        //join函数的作用，将集合类型转化为字符串类型
-        SpuInfoDescEntity descEntity = new SpuInfoDescEntity();
-        descEntity.setSpuId(spuId);
-        descEntity.setDecript(desc);
-        this.descDao.insert(descEntity);
-
+        //saveSpuInfoDesc(spuInfoVO, spuId);
+        this.spuInfoDescService.saveSpuDesc(spuInfoVO, spuId);
         //1.3新增基本属性
-        List<ProductAttrValueVO> baseAttrs = spuInfoVO.getBaseAttrs();
-        baseAttrs.forEach(baseAttr -> {
-            baseAttr.setSpuId(spuId);
-            baseAttr.setAttrSort(0);
-            baseAttr.setQuickShow(1);
-            this.productAttrValueDao.insert(baseAttr);
-        });
-        System.out.println("222222222222");
+        saveBaseAttr(spuInfoVO, spuId);
         //2.新增sku相关的三张表
 
         //2.1获取sku相关信息
+        saveSku(spuInfoVO);
+        //int i= 1/0;
+    }
+
+    private void saveSku(SpuInfoVO spuInfoVO) {
         //在整个执行前，先判断sku的信息是否有，如果没有直接返回。如果有再进行以下操作
         List<SkuInfoVO> skus = (List<SkuInfoVO>) spuInfoVO.getSkus();
         if(CollectionUtils.isEmpty(skus)){
@@ -131,6 +123,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         for (SkuInfoVO skuInfoVO : skus) {
             SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
             //所有的信息都传给了Entity
+            //因为在一个项目组中肯定不止一个人在使用这个信息，如果你的电脑上修改了，那么其他人如何使用
+            //所以在这里，重新new一个对象专门用来进行传输作用
             BeanUtils.copyProperties(skuInfoVO, skuInfoEntity);
             //**********************11**********************//
             skuInfoEntity.setBrandId(spuInfoVO.getBrandId());
@@ -149,7 +143,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             //所以最后保存的是Entity
             this.skuInfoDao.insert(skuInfoEntity);
             Long skuId = skuInfoEntity.getSkuId();
-
 
             // 2.3. 新增sku的图片
             if (!CollectionUtils.isEmpty(images)) {
@@ -180,10 +173,38 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             BeanUtils.copyProperties(skuInfoVO, saleVO);
             saleVO.setSkuId(skuId);
             this.smsClient.saveSale(saleVO);
-
         }
+    }
 
-
+    private void saveBaseAttr(SpuInfoVO spuInfoVO, Long spuId) {
+        List<ProductAttrValueVO> baseAttrs = spuInfoVO.getBaseAttrs();
+        baseAttrs.forEach(baseAttr -> {
+            baseAttr.setSpuId(spuId);
+            baseAttr.setAttrSort(0);
+            baseAttr.setQuickShow(1);
+            this.productAttrValueDao.insert(baseAttr);
+        });
+        System.out.println("222222222222");
+    }
+   /* private void saveSpuInfoDesc(SpuInfoVO spuInfoVO, Long spuId) {
+        List<String> spuImages = spuInfoVO.getSpuImages();
+        String desc = StringUtils.join(spuImages, ",");
+        //join函数的作用，将集合类型转化为字符串类型
+        SpuInfoDescEntity descEntity = new SpuInfoDescEntity();
+        descEntity.setSpuId(spuId);
+        descEntity.setDecript(desc);
+        this.descDao.insert(descEntity);
+    }*/
+    private Long saveSpuInfo(SpuInfoVO spuInfoVO) {
+        System.out.println("111111111111111");
+        spuInfoVO.setCreateTime(new Date());
+        System.out.println("初始化数据"+new Date());
+        //两者之间使用同一个数据，如果没有使用同一个数据，会有毫秒的延迟，导致时间不准确
+        spuInfoVO.setUodateTime(spuInfoVO.getCreateTime());
+        System.out.println("新数据"+spuInfoVO.getCreateTime());
+        this.save(spuInfoVO);
+        //这里的没有使用Dao是因为在本对象的下面
+        return spuInfoVO.getId();
     }
 
 }
