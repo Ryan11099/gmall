@@ -48,7 +48,7 @@ public class SkuBoundsServiceImpl extends ServiceImpl<SkuBoundsDao, SkuBoundsEnt
 
         // 3.1. 新增积分：skuBounds
         SkuBoundsEntity skuBoundsEntity = new SkuBoundsEntity();
-        //当有部分于浩区copy的时候，就不能进行copy，一个一个去设置
+
         skuBoundsEntity.setBuyBounds(saleVO.getBuyBounds());
         skuBoundsEntity.setGrowBounds(saleVO.getGrowBounds());
         skuBoundsEntity.setSkuId(saleVO.getSkuId());

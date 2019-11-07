@@ -35,6 +35,7 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+    @ApiOperation("根据三级分类id分页查询")
     @GetMapping("withattrs/cat/{catId}")
     public Resp<List<AttrGroupVO>> queryGroupWithAttrsByCid(@PathVariable("catId")Long catId){
        List<AttrGroupVO> groupVOS =  this.attrGroupService.queryGroupWithAttrsByCid(catId);

@@ -36,6 +36,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<AttrGroupEntity> page = this.page(
+                //this 在这里调用的其实就是AttrDao。因为是在本类中所以就直接使用this即可
                 new Query<AttrGroupEntity>().getPage(params),
                 //分页条件
                 new QueryWrapper<AttrGroupEntity>()
