@@ -34,6 +34,7 @@ import com.atguigu.gmall.wms.service.WareSkuService;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
     @GetMapping("{skuId}")
     public Resp<List<WareSkuEntity>> queryWareBySkuId(@PathVariable("skuId")Long skuId){
         System.out.println("已经收到请求");

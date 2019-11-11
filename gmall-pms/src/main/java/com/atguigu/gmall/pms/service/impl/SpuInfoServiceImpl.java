@@ -7,17 +7,16 @@ import com.atguigu.gmall.pms.service.SpuInfoDescService;
 import com.atguigu.gmall.pms.vo.ProductAttrValueVO;
 import com.atguigu.gmall.pms.vo.SkuInfoVO;
 import com.atguigu.gmall.pms.vo.SpuInfoVO;
-import java.util.Date;
+
+import java.util.*;
 
 import com.atguigu.sms.gmall.vo.SaleVO;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,6 +47,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private GmallSmsClient smsClient;
     @Autowired
     private SpuInfoDao spuInfoDao;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Autowired
     private SpuInfoDescService spuInfoDescService;
@@ -106,11 +107,23 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //2.新增sku相关的三张表
 
         //2.1获取sku相关信息
-        saveSku(spuInfoVO);
+        saveSku(spuInfoVO , spuId);
+
+        //在执行的最后进行发送消息说明有消息需要进行同步
+
+        sendMsg(spuId , "insert");//需要在传输时直接确定是什么类型的操作
+
         //int i= 1/0;
     }
+    //进行消息同步的方法
+    private void sendMsg(Long spuId , String type) {
+        Map<Object, Object> map = new HashMap<>();
+        map.put("id", spuId);
+        map.put("type", type);
+        this.amqpTemplate.convertAndSend("GMALL-ITEM-EXCHANGE", "item."+type,map );
+    }
 
-    private void saveSku(SpuInfoVO spuInfoVO) {
+    private void saveSku(SpuInfoVO spuInfoVO ,Long spuId) {
         //在整个执行前，先判断sku的信息是否有，如果没有直接返回。如果有再进行以下操作
         List<SkuInfoVO> skus = (List<SkuInfoVO>) spuInfoVO.getSkus();
         if(CollectionUtils.isEmpty(skus)){
@@ -130,6 +143,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             skuInfoEntity.setBrandId(spuInfoVO.getBrandId());
             skuInfoEntity.setCatalogId(spuInfoVO.getCatalogId());
             skuInfoEntity.setSkuCode(UUID.randomUUID().toString());
+            skuInfoEntity.setSpuId(spuId);
             //***********************11*********************//
             //上面是将属性中没有的进行设置
             List<String> images = skuInfoVO.getImages();//可以上传多个图片

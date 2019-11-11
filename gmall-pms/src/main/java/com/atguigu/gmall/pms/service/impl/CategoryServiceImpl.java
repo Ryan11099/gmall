@@ -1,5 +1,7 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.pms.gmall.vo.CategoryVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,10 @@ import com.atguigu.gmall.pms.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+
+    @Autowired
+    private CategoryDao categoryDao;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -45,6 +51,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
 
         return this.list(wrapper);//使用this直接启动相当于利用dao层启动一样，因为位置是在本类中
+
+    }
+
+    @Override
+    public List<CategoryVO> queryCategoryWithSub(Long pid) {
+
+       return this.categoryDao.queryCategoryWithSub(pid);
 
     }
 

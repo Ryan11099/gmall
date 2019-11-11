@@ -2,9 +2,12 @@ package com.atguigu.gmall.pms.service.impl;
 
 import com.atguigu.gmall.pms.dao.AttrAttrgroupRelationDao;
 import com.atguigu.gmall.pms.dao.AttrDao;
+import com.atguigu.gmall.pms.dao.ProductAttrValueDao;
 import com.atguigu.gmall.pms.entity.AttrAttrgroupRelationEntity;
 import com.atguigu.gmall.pms.entity.AttrEntity;
 import com.atguigu.gmall.pms.vo.AttrGroupVO;
+import com.atguigu.pms.gmall.entity.ProductAttrValueEntity;
+import com.atguigu.pms.gmall.vo.GroupVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,8 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     private AttrAttrgroupRelationDao relationDao;
     @Autowired
     private AttrDao attrDao;
+    @Autowired
+    private ProductAttrValueDao productAttrValueDao;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -100,6 +105,25 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         return  queryEntities.stream().map(attrGroupEntity -> this.queryGroupWithAttrs(attrGroupEntity.getAttrGroupId())).collect(Collectors.toList());
 
         //stream表达式用来处理旧的集合将所需的元素取出来组成一个新的集合
+
+
+    }
+
+    @Override
+    public List<GroupVO> queryGroupVOByCid(Long cid, Long spuId) {
+
+        List<AttrGroupEntity> attrGroupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", cid));
+        if(CollectionUtils.isEmpty(attrGroupEntities)){
+            return null;
+        }
+        return attrGroupEntities.stream().map(attrGroupEntity -> {
+            GroupVO groupVO = new GroupVO();
+            groupVO.setGroupName(attrGroupEntity.getAttrGroupName());
+            List<ProductAttrValueEntity> productAttrValueEntities = this.productAttrValueDao.queryByCidAndSpuId(spuId, attrGroupEntity.getAttrGroupId());
+
+            groupVO.setBaseAttrValues(productAttrValueEntities);
+            return groupVO;
+        }).collect(Collectors.toList());
 
 
     }

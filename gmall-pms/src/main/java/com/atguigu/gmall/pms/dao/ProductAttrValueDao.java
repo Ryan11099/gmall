@@ -1,9 +1,9 @@
 package com.atguigu.gmall.pms.dao;
 
 import com.atguigu.gmall.pms.entity.ProductAttrValueEntity;
-import com.atguigu.pms.gmall.vo.SpuAttributeValueVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,4 +18,6 @@ import java.util.List;
 public interface ProductAttrValueDao extends BaseMapper<ProductAttrValueEntity> {
 
     List<ProductAttrValueEntity> querySearchAttrValue(Long spuId);
+
+    List<com.atguigu.pms.gmall.entity.ProductAttrValueEntity> queryByCidAndSpuId(@Param("spuId")Long spuId , @Param("groupId") Long groupId);
 }

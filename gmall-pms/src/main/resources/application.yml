@@ -1,2 +1,8 @@
 #此处的配置文件全部写入到nacos中，便于文件的管理，如果修改配置文件，则不需要再次重新启动微服务
 
+spring:
+  rabbitmq:
+    host: 192.168.118.254
+    username: admin
+    password: admin
+    virtual-host: /admin
