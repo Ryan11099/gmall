@@ -12,9 +12,9 @@ import lombok.Data;
 /**
  * 会员统计信息
  * 
- * @author Ryan
- * @email Ryan@atguigu.com
- * @date 2019-10-28 19:30:13
+ * @author lixianfeng
+ * @email lxf@atguigu.com
+ * @date 2019-10-28 20:17:50
  */
 @ApiModel
 @Data

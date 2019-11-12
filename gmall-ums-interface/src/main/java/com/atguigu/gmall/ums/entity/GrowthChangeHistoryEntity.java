@@ -9,16 +9,16 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 积分变化历史记录
+ * 成长值变化历史记录
  * 
- * @author Ryan
- * @email Ryan@atguigu.com
- * @date 2019-10-28 19:30:13
+ * @author lixianfeng
+ * @email lxf@atguigu.com
+ * @date 2019-10-28 20:17:50
  */
 @ApiModel
 @Data
-@TableName("ums_integration_change_history")
-public class IntegrationChangeHistoryEntity implements Serializable {
+@TableName("ums_growth_change_history")
+public class GrowthChangeHistoryEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -38,9 +38,9 @@ public class IntegrationChangeHistoryEntity implements Serializable {
 	@ApiModelProperty(name = "createTime",value = "create_time")
 	private Date createTime;
 	/**
-	 * 变化的值
+	 * 改变的值（正负计数）
 	 */
-	@ApiModelProperty(name = "changeCount",value = "变化的值")
+	@ApiModelProperty(name = "changeCount",value = "改变的值（正负计数）")
 	private Integer changeCount;
 	/**
 	 * 备注
@@ -48,9 +48,9 @@ public class IntegrationChangeHistoryEntity implements Serializable {
 	@ApiModelProperty(name = "note",value = "备注")
 	private String note;
 	/**
-	 * 来源[0->购物；1->管理员修改;2->活动]
+	 * 积分来源[0-购物，1-管理员修改]
 	 */
-	@ApiModelProperty(name = "sourceTyoe",value = "来源[0->购物；1->管理员修改;2->活动]")
-	private Integer sourceTyoe;
+	@ApiModelProperty(name = "sourceType",value = "积分来源[0-购物，1-管理员修改]")
+	private Integer sourceType;
 
 }

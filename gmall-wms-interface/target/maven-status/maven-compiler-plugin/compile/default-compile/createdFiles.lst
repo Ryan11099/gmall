@@ -1,0 +1,7 @@
+com\atguigu\gamll\wms\entity\WareOrderTaskDetailEntity.class
+com\atguigu\gamll\wms\entity\WareInfoEntity.class
+com\atguigu\gmall\wms\api\GmallWmsApi.class
+com\atguigu\gamll\wms\entity\ShAreaEntity.class
+com\atguigu\gamll\wms\entity\FeightTemplateEntity.class
+com\atguigu\gamll\wms\entity\WareSkuEntity.class
+com\atguigu\gamll\wms\entity\WareOrderTaskEntity.class
