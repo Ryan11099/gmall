@@ -6,4 +6,10 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-
+auth:
+  jwt:
+    publicKeyPath: E:\\IDEA\\myGmall\\tmp\\rsa.pub
+    privateKeyPath: E:\\IDEA\\myGmall\\tmp\\rsa.pri
+    expire: 180
+    cookieName: GMALL_TOKEN
+    secret: qwewqtyuiopoitur

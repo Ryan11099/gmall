@@ -1,5 +1,6 @@
 package com.atguigu.gmall.ums.service.impl;
 
+import com.atguigu.gmall.ums.entity.IntegrationChangeHistoryEntity;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;

@@ -32,7 +32,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    @GetMapping
+    @GetMapping("query")
     public Resp<MemberEntity> queryUser(@RequestParam("uaername") String userName , @RequestParam("password") String password){
         MemberEntity memberEntity = this.memberService.queryUser(userName , password);
 

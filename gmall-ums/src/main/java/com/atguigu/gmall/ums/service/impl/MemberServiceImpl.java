@@ -1,5 +1,6 @@
 package com.atguigu.gmall.ums.service.impl;
 
+import com.atguigu.gmall.ums.entity.MemberEntity;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
