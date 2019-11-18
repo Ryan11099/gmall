@@ -7,6 +7,11 @@ spring:
         server-addr: 127.0.0.1:8848
   redis:
     host: 192.168.118.254
+  rabbitmq:
+    host: 192.168.118.254
+    virtual-host: /admin
+    username: admin
+    password: admin
 auth:
   jwt:
     publicKeyPath: E:\\IDEA\\myGmall\\tmp\\rsa.pub

@@ -2,7 +2,7 @@ package com.atguigu.gmall.search;
 
 import com.atguigu.core.bean.QueryCondition;
 import com.atguigu.core.bean.Resp;
-import com.atguigu.gamll.wms.entity.WareSkuEntity;
+import com.atguigu.gmall.wms.entity.WareSkuEntity;
 import com.atguigu.gmall.search.feign.GmallPmsClient;
 import com.atguigu.gmall.search.feign.GmallWmsClient;
 import com.atguigu.gmall.search.vo.GoodsVO;

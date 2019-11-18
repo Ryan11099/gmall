@@ -1,7 +1,7 @@
 package com.atguigu.gmall.item.service;
 
 import com.atguigu.core.bean.Resp;
-import com.atguigu.gamll.wms.entity.WareSkuEntity;
+import com.atguigu.gmall.wms.entity.WareSkuEntity;
 import com.atguigu.gmall.item.feign.GmallPmsClient;
 import com.atguigu.gmall.item.feign.GmallSmsClient;
 import com.atguigu.gmall.item.feign.GmallWmsClient;

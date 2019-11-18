@@ -2,15 +2,12 @@ package com.atguigu.gmall.cart.interceptor;
 
 import com.atguigu.core.utils.CookieUtils;
 import com.atguigu.core.utils.JwtUtils;
-import com.atguigu.gmall.cart.VO.UserInfo;
+import com.atguigu.core.bean.UserInfo;
 import com.atguigu.gmall.cart.config.JwtProperties;
-import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +39,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         }
         userInfo.setUserKey(userKey);
 
-        if (StringUtils.isEmpty(token)) {// 已经验证过了userkey的是否为空，为什么还要判断token的空值性
+        if (StringUtils.isEmpty(token)) {
             THREAD_LOCAL.set(userInfo);
             return true;
         }
@@ -61,7 +58,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     }
 
     public static UserInfo get(){
+
         return THREAD_LOCAL.get();
+
     }
 
     @Override
