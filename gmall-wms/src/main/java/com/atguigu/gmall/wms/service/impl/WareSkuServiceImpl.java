@@ -89,11 +89,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         lock.lock();
         // 验库存
         List<WareSkuEntity> wareSkuEntities = this.wareSkuDao.checkStore(skuLockVO.getSkuId(), skuLockVO.getCount());
-        skuLockVO.setLock(false);
+        skuLockVO.setLock(false);// 库存数不足，锁定失败
         if (!CollectionUtils.isEmpty(wareSkuEntities)) {
             // 锁库存
             if (this.wareSkuDao.lock(wareSkuEntities.get(0).getId(), skuLockVO.getCount()) == 1) {
-                skuLockVO.setLock(true);
+                skuLockVO.setLock(true);// 锁定成功
                 skuLockVO.setSkuWareId(wareSkuEntities.get(0).getId());
             }
         }

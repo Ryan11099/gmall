@@ -15,7 +15,6 @@ import com.atguigu.gmall.wms.vo.SkuLockVO;
 import com.atguigu.pms.gmall.entity.SkuInfoEntity;
 import com.atguigu.pms.gmall.entity.SkuSaleAttrValueEntity;
 import com.atguigu.sms.gmall.vo.ItemSaleVO;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -23,7 +22,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.atguigu.gmall.cart.vo.CartItemVO;
-
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -130,7 +129,7 @@ public class OrderService {
 
         return orderConfirmVO;
     }
-    public void submit(OrderSubmitVO orderSubmitVO) {
+    public OrderEntity submit(OrderSubmitVO orderSubmitVO) {
         //1. 验证令牌防止重复提交
         String orderToken = orderSubmitVO.getOrderToken();
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
@@ -184,5 +183,11 @@ public class OrderService {
         List<Long> skuIds = orderItemVOS.stream().map(orderItemVO -> orderItemVO.getSkuId()).collect(Collectors.toList());
         map.put("skuIds", skuIds);
         this.amqpTemplate.convertAndSend("GMALL-ORDER-EXCHANGE", "cart.delete", map);
+        return null;
+    }
+
+    public void paySucess(String out_trade_no) {
+
+        this.amqpTemplate.convertAndSend("GMALL-ORDER-EXCHANGE", "order.pay", out_trade_no);
     }
 }

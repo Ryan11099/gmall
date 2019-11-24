@@ -22,7 +22,7 @@ public class WareListener {
     @RabbitListener(queues = {"WMS-DEAD-QUEUE"})
     public void unlock(String orderToken){
 
-        // 获取要解锁的所有库存
+        // 获取要解锁的所有库存,,过期了
         String stockJson = this.redisTemplate.opsForValue().get("order:stock:" + orderToken);
         // 反序列化
         List<SkuLockVO> skuLockVOS = JSON.parseArray(stockJson, SkuLockVO.class);

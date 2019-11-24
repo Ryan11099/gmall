@@ -9,6 +9,7 @@ import com.atguigu.gmall.oms.vo.OrderItemVO;
 import com.atguigu.gmall.oms.vo.OrderSubmitVO;
 import com.atguigu.gmall.ums.entity.MemberReceiveAddressEntity;
 import com.atguigu.pms.gmall.entity.SkuInfoEntity;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,16 @@ import org.springframework.util.CollectionUtils;
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
 
     @Autowired
-    private GmallPmsClient gmallPmsClient;
+    private OrderDao orderDao;
+
     @Autowired
     private OrderItemDao orderItemDao;
+
+    @Autowired
+    private GmallPmsClient gmallPmsClient;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<OrderEntity> page = this.page(
@@ -105,5 +113,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
 
         return orderEntity;
+    }
+
+    @Override
+    public int closeOrder(String orderToken) {
+
+        return this.orderDao.closeOrder(orderToken);
+    }
+
+
+
+    @Override
+    public int success(String orderToken) {
+
+        return this.orderDao.success(orderToken);
     }
 }

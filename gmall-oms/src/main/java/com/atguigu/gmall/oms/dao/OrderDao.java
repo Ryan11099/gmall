@@ -14,5 +14,9 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface OrderDao extends BaseMapper<OrderEntity> {
-	
+
+    int closeOrder(String orderToken);
+
+    int success(String orderToken);
+
 }
